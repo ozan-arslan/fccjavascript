@@ -1,0 +1,11 @@
+body {
+  background-color: black;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+#result {
+  color: white;
+  display: flex;
+  justify-content: center;
+}
