@@ -21,4 +21,3 @@ const calculate = () => {
   document.querySelector("#mean").textContent = mean;
   document.querySelector("#median").textContent = median;
 };
-//yarrrrrrrrrrrrrak there are changes and you need to pushhh!!!!!!!!!
