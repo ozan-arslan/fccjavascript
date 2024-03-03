@@ -4,14 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./style.css" />
-    <script src="./script.js"></script>
     <title>Statistics Calculator</title>
   </head>
   <body>
     <h1>Statistics Calculator</h1>
     <p>Enter a list of comma-separated numbers.</p>
 
-    <form onsubmit="calculate();">
+    <form id="calculate">
       <label for="numbers">Numbers:</label>
       <input type="text" name="numbers" id="numbers" />
       <button type="submit">Calculate</button>
@@ -50,5 +49,7 @@
         Standard Deviation: <span id="standardDeviation"></span>
       </p>
     </div>
+    <!--Instead of invoking the calculate function from the html, I have added an event listener to javascript. Script tag had to be moved from the head tag to the bottom of the body tag -->
+    <script src="./script.js"></script>
   </body>
 </html>
