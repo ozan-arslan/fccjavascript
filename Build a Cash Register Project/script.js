@@ -2,24 +2,28 @@ const statusDiv = document.getElementById("change-due");
 const button = document.getElementById("purchase-btn");
 const input = document.getElementById("cash");
 const cidCash = document.getElementById("cash-drawer-display");
-const pElements = cidCash.getElementsByTagName("p");
-const pArray = Array.from(pElements);
+const pElements = Array.from(cidCash.getElementsByTagName("p"));
+
+const decimalRounder = (num) => {
+  const factor = Math.pow(10, 2);
+  return Math.round(num * factor) / factor;
+};
 
 let price = 0;
 let cid = [
-  ["PENNY", 1.01],
-  ["NICKEL", 2.05],
-  ["DIME", 3.1],
-  ["QUARTER", 4.25],
-  ["ONE", 90],
-  ["FIVE", 55],
-  ["TEN", 20],
-  ["TWENTY", 60],
-  ["ONE HUNDRED", 100],
+  ["PENNY", 101],
+  ["NICKEL", 205],
+  ["DIME", 310],
+  ["QUARTER", 425],
+  ["ONE", 9000],
+  ["FIVE", 5500],
+  ["TEN", 2000],
+  ["TWENTY", 6000],
+  ["ONE HUNDRED", 10000],
 ];
 
 let cCash;
-const monValues = [0.01, 0.05, 0.1, 0.25, 1, 5, 10, 20, 100];
+const monValues = [1, 5, 10, 25, 100, 500, 1000, 2000, 10000];
 const monQuantity = cid.map((el, i) => {
   return Math.ceil(el[1] / monValues[i]);
 });
@@ -31,21 +35,27 @@ const calculate = (changeDue) => {
       if (billsToGive <= monQuantity[i]) {
         monQuantity[i] -= billsToGive;
         changeDue -= billsToGive * monValues[i];
-        console.log(billsToGive * monValues[i]);
       } else {
         changeDue -= monQuantity[i] * monValues[i];
         monQuantity[i] = 0;
-        console.log(monQuantity[i] * monValues[i]);
       }
     }
-    console.log(monQuantity);
-    console.log(changeDue);
   }
+  cid.forEach((el, i) => {
+    return (el[1] = decimalRounder((monQuantity[i] * monValues[i]) / 100));
+  });
+};
+
+const htmlUpdate = () => {
+  pElements.forEach((el, i, arr) => {
+    arr[i].textContent = arr[i].textContent.split("$")[0] + `$${cid[i][1]}`;
+  });
 };
 
 const activateBtn = () => {
   cCash = Number(input.value);
-  calculate(cCash - price);
+  calculate(decimalRounder(100 * (cCash - price)));
+  htmlUpdate();
 };
 
 const isBtnPressed = (e) => {
