@@ -4,7 +4,7 @@ const input = document.getElementById("cash");
 const cidCash = document.getElementById("cash-drawer-display");
 const pElements = Array.from(cidCash.getElementsByTagName("p"));
 
-let price = 0;
+let price = 1.87;
 let cid = [
   ["PENNY", 101],
   ["NICKEL", 205],
@@ -46,12 +46,6 @@ const monChangeQuantities = (value, monQtyArr, monValArr) => {
   return changeDueArr;
 };
 
-/*
-cid.forEach((el, i) => {
-  return (el[1] = decimalRounder((monQuantity[i] * monValues[i]) / 100));
-});
-*/
-
 const htmlUpdate = () => {
   pElements.forEach((el, i, arr) => {
     arr[i].textContent = arr[i].textContent.split("$")[0] + `$${cid[i][1]}`;
@@ -64,15 +58,7 @@ const totalCashFunc = () => {
     .reduce((acc, currVal) => {
       return acc + currVal;
     }, 0);
-  change = monChangeQuantities(
-    decimalRounder(100 * (cCash - price)),
-    monQuantity,
-    monValues
-  )
-    .map((el, i) => el * monValues[i])
-    .reduce((acc, currVal) => {
-      return acc + currVal;
-    }, 0);
+  change = decimalRounder(100 * (cCash - price));
 };
 
 const decimalRounder = (num) => {
@@ -80,26 +66,50 @@ const decimalRounder = (num) => {
   return Math.round(num * factor) / factor;
 };
 
-const insufStatus = () => {
-  let changeQtyArr = monChangeQuantities(
-    decimalRounder(100 * (cCash - price)),
-    monQuantity,
-    monValues
-  );
+const statusFunction = () => {
+  if (decimalRounder(100 * (cCash - price)) === totalCid) {
+    cid.forEach((el, i) => {
+      return (el[1] = decimalRounder((monQuantity[i] * monValues[i]) / 100));
+    });
+    statusDiv.innerHTML = "Status: CLOSED";
+  } else {
+    let changeQtyArr = monChangeQuantities(
+      decimalRounder(100 * (cCash - price)),
+      monQuantity,
+      monValues
+    );
 
-  if (true) {
+    let changeQtyToNominal = changeQtyArr
+      .map((el, i) => el * monValues[i])
+      .reduce((acc, currVal) => {
+        return acc + currVal;
+      }, 0);
+    if (totalCid >= change && changeQtyToNominal === change) {
+      for (let i = 8; i != -1; i--) {
+        monQuantity[i] -= changeQtyArr[i];
+      }
+      cid.forEach((el, i) => {
+        return (el[1] = decimalRounder((monQuantity[i] * monValues[i]) / 100));
+      });
+      statusDiv.innerHTML = `<p>Status: OPEN</p>`;
+      for (i = 8; i != -1; i--) {
+        if (changeQtyArr[i] > 0) {
+          statusDiv.innerHTML += `<p>${cid[i][0]}: $${decimalRounder(
+            (changeQtyArr[i] * monValues[i]) / 100
+          )}</p>`;
+        }
+      }
+    } else {
+      statusDiv.innerHTML = `<p>Status: INSUFFICIENT_FUNDS</p>`;
+    }
   }
-
-  console.log(monQuantity);
-  console.log(totalCid / 100);
-  console.log(changeQtyArr);
-  console.log(change / 100);
 };
 
 const activateBtn = () => {
   cCash = Number(input.value);
   totalCashFunc();
-  insufStatus();
+  statusFunction();
+  htmlUpdate();
 };
 
 const isBtnPressed = (e) => {
